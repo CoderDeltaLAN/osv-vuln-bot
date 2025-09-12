@@ -1,0 +1,4 @@
+[
+  {"ecosystem":"PyPI","name":"requests","version":"2.32.0"},
+  {"ecosystem":"npm","name":"lodash","version":"4.17.21"}
+]

@@ -1,0 +1,24 @@
+# Ejecutar desde el repo:
+cd /home/user/Proyectos/osv-vuln-bot
+
+# Limpieza
+rm -rf .venv dist build .mypy_cache .pytest_cache _ci_logs
+
+# Instalar
+poetry install --no-interaction
+
+# Gates Always-Green
+poetry run ruff check . --fix
+poetry run ruff check .
+poetry run black .
+poetry run black --check .
+
+# Tests 100%
+PYTHONPATH=src poetry run pytest -q
+
+# Type-check
+poetry run mypy src
+
+# Smoke CLI
+poetry run osv-vuln-bot --help
+poetry run osv-vuln-bot scan --deps examples/deps.sample.json --fail-on critical

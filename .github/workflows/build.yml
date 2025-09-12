@@ -1,0 +1,84 @@
+name: CI / build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+concurrency:
+  group: "ci-${{ github.ref }}"
+  cancel-in-progress: false
+
+jobs:
+  python:
+    name: python (${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: [ "3.11", "3.12" ]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install Poetry
+        run: |
+          python -m pip install --upgrade pip
+          pip install poetry
+
+      - name: Cache Poetry
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pypoetry
+          key: poetry-${{ runner.os }}-${{ matrix.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          restore-keys: |
+            poetry-${{ runner.os }}-${{ matrix.python-version }}-
+
+      - name: Install deps
+        run: |
+          poetry install --no-interaction
+
+      - name: Lint (ruff)
+        run: |
+          mkdir -p _ci_logs
+          poetry run ruff check . --output-format=github 2>&1 | tee -a _ci_logs/ruff.log
+
+      - name: Format (black --check)
+        run: |
+          poetry run black --check . 2>&1 | tee -a _ci_logs/black.log
+
+      - name: Tests (pytest 100%)
+        env:
+          PYTHONPATH: src
+        run: |
+          poetry run pytest -q 2>&1 | tee -a _ci_logs/pytest.log
+
+      - name: Type check (mypy src)
+        run: |
+          poetry run mypy src 2>&1 | tee -a _ci_logs/mypy.log
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-${{ matrix.python-version }}
+          path: _ci_logs
+
+      - name: Job summary
+        if: always()
+        run: |
+          echo "### CI logs for Python ${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "- ruff: See artifact logs-${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- black: See artifact logs-${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- pytest: See artifact logs-${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- mypy: See artifact logs-${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,31 @@
+Creating virtualenv osv-vuln-bot in /home/user/Proyectos/osv-vuln-bot/.venv
+Installing dependencies from lock file
+
+Package operations: 24 installs, 0 updates, 0 removals
+
+  - Installing certifi (2025.8.3)
+  - Installing h11 (0.16.0)
+  - Installing idna (3.10)
+  - Installing packaging (25.0)
+  - Installing pluggy (1.6.0)
+  - Installing iniconfig (2.1.0)
+  - Installing pygments (2.19.2)
+  - Installing sniffio (1.3.1)
+  - Installing typing-extensions (4.15.0)
+  - Installing anyio (4.10.0)
+  - Installing click (8.2.1)
+  - Installing coverage (7.10.6)
+  - Installing httpcore (1.0.9)
+  - Installing mypy-extensions (1.1.0)
+  - Installing pathspec (0.12.1)
+  - Installing platformdirs (4.4.0)
+  - Installing pytest (8.4.2)
+  - Installing urllib3 (2.5.0)
+  - Installing black (24.10.0)
+  - Installing httpx (0.27.2)
+  - Installing mypy (1.18.1)
+  - Installing pytest-cov (5.0.0)
+  - Installing types-requests (2.32.4.20250809)
+  - Installing ruff (0.5.7)
+
+Installing the current project: osv-vuln-bot (0.1.0)
