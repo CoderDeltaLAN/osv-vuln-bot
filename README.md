@@ -23,3 +23,6 @@ poetry run osv-vuln-bot scan --deps examples/deps.sample.json --out /tmp/osv-rep
 - Code scanning: **CodeQL Analysis**.
 
 License: MIT.
+
+
+Public repo: https://github.com/CoderDeltaLAN/osv-vuln-bot
