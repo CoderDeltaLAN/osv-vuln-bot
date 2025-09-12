@@ -1,0 +1,25 @@
+name-template: 'v$NEXT_PATCH_VERSION'
+tag-template: 'v$NEXT_PATCH_VERSION'
+change-template: '- $TITLE (#$NUMBER)'
+no-changes-template: 'No user-facing changes.'
+
+categories:
+  - title: '🚀 Features'
+    labels: ['feat','feature','enhancement']
+  - title: '🐛 Fixes'
+    labels: ['fix','bug','bugfix']
+  - title: '🧰 Chores'
+    labels: ['chore','build','deps']
+  - title: '📚 Docs'
+    labels: ['docs']
+  - title: '🧪 CI'
+    labels: ['ci']
+
+version-resolver:
+  major:
+    labels: ['major']
+  minor:
+    labels: ['minor','feat']
+  patch:
+    labels: ['patch','fix','chore','docs','ci','build','deps']
+  default: patch
