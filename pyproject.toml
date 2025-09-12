@@ -9,7 +9,7 @@ packages = [{ include = "osv_vuln_bot", from = "src" }]
 
 [tool.poetry.dependencies]
 python = ">=3.11,<3.13"
-httpx = "^0.27.0"
+httpx = "^0.28.1"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.2.0"
