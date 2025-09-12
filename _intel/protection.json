@@ -1,13 +1,7 @@
 {
-  "required_status_checks": {
-    "strict": true,
-    "contexts": ["Analyze","python (3.11)","python (3.12)","update"]
-  },
+  "required_status_checks": { "strict": true, "contexts": ["Analyze","python (3.11)","python (3.12)"] },
   "enforce_admins": true,
-  "required_pull_request_reviews": {
-    "required_approving_review_count": 1,
-    "require_code_owner_reviews": false
-  },
+  "required_pull_request_reviews": { "required_approving_review_count": 1, "require_code_owner_reviews": false },
   "restrictions": null,
   "required_linear_history": true,
   "allow_force_pushes": false,

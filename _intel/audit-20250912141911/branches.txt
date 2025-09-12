@@ -1,0 +1,12 @@
+ci/osv-scan-from-poetry-20250912141853
+dependabot/github_actions/actions/checkout-5
+dependabot/github_actions/actions/github-script-8
+dependabot/github_actions/actions/setup-python-6
+dependabot/github_actions/amannn/action-semantic-pull-request-6
+dependabot/pip/black-25.1.0
+dependabot/pip/httpx-0.28.1
+dependabot/pip/pytest-cov-7.0.0
+dependabot/pip/ruff-0.13.0
+docs/readme-badges-20250912141245
+main
+ops/init-20250912135516
