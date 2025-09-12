@@ -1,9 +1,8 @@
 name: Release Drafter
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    types: [opened, edited, reopened, synchronize, ready_for_review, labeled, unlabeled, closed]
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -11,7 +10,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  update:
+  release-drafter:
     runs-on: ubuntu-latest
     steps:
       - uses: release-drafter/release-drafter@v6
