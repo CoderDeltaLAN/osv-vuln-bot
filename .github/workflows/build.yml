@@ -56,7 +56,7 @@ jobs:
         run: |
           poetry run black --check . 2>&1 | tee -a _ci_logs/black.log
 
-      - name: Tests (pytest 100%)
+      - name: Tests (pytest 95%+)
         env:
           PYTHONPATH: src
         run: |
@@ -65,6 +65,15 @@ jobs:
       - name: Type check (mypy src)
         run: |
           poetry run mypy src 2>&1 | tee -a _ci_logs/mypy.log
+
+      - name: Generate deps from poetry.lock
+        run: |
+          poetry run python scripts/gen_deps_from_poetry.py poetry.lock > deps.ci.json
+          echo "Deps count=$(jq 'length' deps.ci.json)"
+
+      - name: OSV scan (fail on high)
+        run: |
+          poetry run osv-vuln-bot --deps deps.ci.json --fail-on high 2>&1 | tee -a _ci_logs/osv_scan.log
 
       - name: Upload logs
         if: always()
@@ -77,8 +86,4 @@ jobs:
         if: always()
         run: |
           echo "### CI logs for Python ${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "- ruff: See artifact logs-${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
-          echo "- black: See artifact logs-${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
-          echo "- pytest: See artifact logs-${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
-          echo "- mypy: See artifact logs-${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY
+          echo "- ruff/black/pytest/mypy/osv: See artifact logs-${{ matrix.python-version }}" >> $GITHUB_STEP_SUMMARY

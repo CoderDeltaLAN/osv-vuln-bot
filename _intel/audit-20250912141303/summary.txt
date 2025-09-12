@@ -1,0 +1,16 @@
+# Audit for CoderDeltaLAN/osv-vuln-bot
+default_branch=main
+{
+  "strict": true,
+  "contexts": [
+    "Analyze",
+    "python (3.11)",
+    "python (3.12)",
+    "update"
+  ],
+  "admins": {
+    "url": "https://api.github.com/repos/CoderDeltaLAN/osv-vuln-bot/branches/main/protection/enforce_admins",
+    "enabled": true
+  },
+  "approvals": 1
+}
