@@ -1,21 +1,27 @@
 version: 2
 updates:
-  - package-ecosystem: "github-actions"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "04:00"
-      timezone: "Europe/Lisbon"
-    open-pull-requests-limit: 10
-    labels: ["deps","ci"]
   - package-ecosystem: "pip"
     directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "04:15"
-      timezone: "Europe/Lisbon"
-    open-pull-requests-limit: 10
-    labels: ["deps","python"]
-    versioning-strategy: increase-if-necessary
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 2
+    groups:
+      python-dev:
+        patterns:
+          - "black"
+          - "ruff"
+          - "pytest*"
+          - "mypy*"
+      python-runtime:
+        patterns: ["*"]
+        exclude-patterns:
+          - "black"
+          - "ruff"
+          - "pytest*"
+          - "mypy*"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule: { interval: "weekly" }
+    open-pull-requests-limit: 2
+    groups:
+      gh-actions:
+        patterns: ["*"]
