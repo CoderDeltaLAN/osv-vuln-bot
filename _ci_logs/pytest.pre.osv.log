@@ -1,0 +1,12 @@
+.............                                                            [100%]
+
+---------- coverage: platform linux, python 3.12.6-final-0 -----------
+Name                             Stmts   Miss  Cover   Missing
+--------------------------------------------------------------
+src/osv_vuln_bot/__init__.py         2      0   100%
+src/osv_vuln_bot/cli.py             41      0   100%
+src/osv_vuln_bot/osv_client.py      73      4    95%   53-54, 72-73
+--------------------------------------------------------------
+TOTAL                              116      4    97%
+
+Required test coverage of 95% reached. Total coverage: 96.55%

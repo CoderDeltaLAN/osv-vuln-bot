@@ -1,0 +1,11 @@
+scripts/gen_deps_from_poetry.py:2:1: E401 [*] Multiple imports on one line
+  |
+1 | from __future__ import annotations
+2 | import sys, json
+  | ^^^^^^^^^^^^^^^^ E401
+3 | from pathlib import Path
+  |
+  = help: Split imports
+
+Found 1 error.
+[*] 1 fixable with the `--fix` option.

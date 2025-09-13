@@ -1,0 +1,2 @@
+# Protecciones
+{"approvals":1,"contexts":["Analyze","python (3.11)","python (3.12)"],"strict":true}
