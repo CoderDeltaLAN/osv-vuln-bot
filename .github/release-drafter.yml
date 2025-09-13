@@ -1,25 +1,30 @@
-name-template: 'v$NEXT_PATCH_VERSION'
-tag-template: 'v$NEXT_PATCH_VERSION'
-change-template: '- $TITLE (#$NUMBER)'
-no-changes-template: 'No user-facing changes.'
+name-template: 'v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
 
 categories:
   - title: '🚀 Features'
     labels: ['feat','feature','enhancement']
   - title: '🐛 Fixes'
-    labels: ['fix','bug','bugfix']
-  - title: '🧰 Chores'
-    labels: ['chore','build','deps']
-  - title: '📚 Docs'
+    labels: ['fix','bug']
+  - title: '🧰 Maintenance'
+    labels: ['chore','build','ci','refactor']
+  - title: '📝 Docs'
     labels: ['docs']
-  - title: '🧪 CI'
-    labels: ['ci']
+  - title: '✅ Tests'
+    labels: ['test']
+
+change-template: '- $TITLE (#$NUMBER) by @$AUTHOR'
+no-changes-template: 'No changes.'
 
 version-resolver:
   major:
-    labels: ['major']
+    labels: ['major','breaking','semver:major']
   minor:
-    labels: ['minor','feat']
+    labels: ['minor','feat','enhancement','semver:minor']
   patch:
-    labels: ['patch','fix','chore','docs','ci','build','deps']
+    labels: ['patch','fix','chore','ci','docs','refactor','test','semver:patch']
   default: patch
+
+template: |
+  ## What’s Changed
+  $CHANGES
