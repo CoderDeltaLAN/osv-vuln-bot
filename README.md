@@ -1,165 +1,107 @@
-# ⭐ osv-vuln-bot — Always-Green OSV Scanner (Python CLI)
+# 🔎 OSV Vulnerability Bot — Always‑Green Python Project
 
-A lean, production-grade **Python CLI** to audit dependencies against [OSV.dev](https://osv.dev/).  
-It mirrors CI locally, enables **CodeQL**, enforces a **strict always-green** workflow (linear history + required checks), and fails builds when risk thresholds are met.
+Automated vulnerability scanning and CI hardening for Python projects.  
+This repo integrates **OSV‑Scanner** against `poetry.lock`, a strict **green CI** (ruff, black, pytest, mypy), and **CodeQL** for security—all guarded by branch protection.
 
 <div align="center">
 
-[![CI / build](https://github.com/CoderDeltaLAN/osv-vuln-bot/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/CoderDeltaLAN/osv-vuln-bot/actions/workflows/build.yml)
-[![CodeQL Analysis](https://github.com/CoderDeltaLAN/osv-vuln-bot/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/CoderDeltaLAN/osv-vuln-bot/actions/workflows/codeql.yml)
+[![CI](https://github.com/CoderDeltaLAN/osv-vuln-bot/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/CoderDeltaLAN/osv-vuln-bot/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/CoderDeltaLAN/osv-vuln-bot/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/CoderDeltaLAN/osv-vuln-bot/actions/workflows/codeql.yml)
 [![Release](https://img.shields.io/github/v/release/CoderDeltaLAN/osv-vuln-bot?display_name=tag)](https://github.com/CoderDeltaLAN/osv-vuln-bot/releases)
 ![Python 3.11|3.12](https://img.shields.io/badge/Python-3.11%20|%203.12-3776AB?logo=python)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
-[![Donate](https://img.shields.io/badge/Donate-PayPal-0070ba?logo=paypal&logoColor=white)](https://www.paypal.com/donate/?hosted_button_id=YVENCBNCZWVPW)
 
 </div>
 
 ---
 
-## Repo layout
+## What this project does
 
-```text
-.
-├── scripts/                      # Utilities (e.g., gen_deps_from_poetry.py)
-├── examples/deps.sample.json     # Example dependency inventory
-├── src/osv_vuln_bot/             # Python package + CLI
-├── tests/                        # pytest (95%+ coverage)
-└── .github/workflows/            # build.yml, codeql.yml, etc.
-```
+- Runs **OSV‑Scanner** on `poetry.lock` to surface known vulnerabilities early.
+- Enforces **always‑green** PRs with required checks: *Analyze*, *python (3.11)*, *python (3.12)*.
+- Uses **CodeQL** for code‑scanning and **Release Drafter** + conventional commits for clean releases.
+- Keeps **linear history** via squash‑merge and branch protection.
 
 ---
 
-## 🚀 Quick Start (Python)
+## Quick start (local)
 
 ```bash
-cd /home/user/Proyectos/osv-vuln-bot
-poetry install --no-interaction
+# Install tooling (inside your virtualenv)
+python -m pip install -U pip
+pip install ruff black pytest mypy
 
-# Local gates (mirror CI)
-poetry run ruff check .
-poetry run black --check .
-PYTHONPATH=src poetry run pytest -q
-poetry run mypy src
+# Lint/format/tests/types (mirrors CI)
+ruff check .
+black --check .
+PYTHONPATH=src pytest -q
+mypy src
 ```
 
-### CLI usage
-
-Generate inventory from `poetry.lock` and scan:
-
+### Local OSV scan
 ```bash
-cd /home/user/Proyectos/osv-vuln-bot
-poetry run python scripts/gen_deps_from_poetry.py poetry.lock > deps.json
-poetry run osv-vuln-bot --deps deps.json --fail-on high
+# Option A: Using osv-scanner CLI
+python -m pip install osv-scanner
+osv-scanner --lockfile=poetry.lock
+
+# Option B: Docker (if you prefer containers)
+docker run --rm -v "$PWD:/work" ghcr.io/google/osv-scanner:latest \
+  --lockfile=/work/poetry.lock
 ```
 
-Help & options:
-
-```bash
-cd /home/user/Proyectos/osv-vuln-bot
-poetry run osv-vuln-bot --help
-```
-
-**Notes**  
-- `--deps` expects a JSON array of `{ "ecosystem":"PyPI", "name":"<pkg>", "version":"<ver>" }`.  
-- `--fail-on` supports: `none | low | moderate | high | critical`.  
-- If the threshold is met or exceeded, the process **exits non-zero** (perfect for CI gating).
+> CI runs these gates on PRs and `main`. Branch protection blocks merges if any fail.
 
 ---
 
-## 🧪 Local Developer Workflow (mirrors CI)
+## CI / CD
 
-```bash
-cd /home/user/Proyectos/osv-vuln-bot
-poetry run ruff check .
-poetry run black --check .
-PYTHONPATH=src poetry run pytest -q
-poetry run mypy src
-```
+- **CI:** `.github/workflows/ci.yml` → Linux, Python 3.11/3.12, ruff/black/pytest/mypy.
+- **Security:** `.github/workflows/codeql.yml` → CodeQL analysis on PRs and `main`.
+- **Releases:** Drafted by Release Drafter; tags via GitHub Releases. Keep commits conventional for good notes.
 
----
-
-## 🔧 CI (GitHub Actions)
-
-- Linux matrix **Python 3.11 / 3.12** with steps matching local gates.
-- **OSV scan** integrated (job fails when the risk threshold is hit).
-- **Artifacts** with per-job logs for troubleshooting.
-- **CodeQL** runs on PRs and `main`.
-
-Relevant Python job fragment:
+Example Python steps (as in CI):
 
 ```yaml
-- run: python -m pip install --upgrade pip
-- run: pip install poetry
-- run: poetry install --no-interaction
-- run: poetry run ruff check .
-- run: poetry run black --check .
-- env:
-    PYTHONPATH: src
-  run: poetry run pytest -q
-- run: poetry run mypy src
-- name: Generate deps from poetry.lock
-  run: poetry run python scripts/gen_deps_from_poetry.py poetry.lock > deps.ci.json
-- name: OSV scan (fail on high)
-  run: poetry run osv-vuln-bot --deps deps.ci.json --fail-on high
+- run: python -m pip install -U pip
+- run: pip install ruff black pytest mypy
+- run: ruff check .
+- run: black --check .
+- run: pytest -q
+- run: mypy src
 ```
 
 ---
 
-## 🗺 When to Use This Project
+## Branch protection (main)
 
-- You need **security gating** with OSV on PRs and `main`.
-- Python repos that must **stay green** (branch protections + auto-merge).
-- Prefer **linear history** via squash-merge.
-
----
-
-## 🧩 Customization
-
-- Tune `--fail-on` to match your risk appetite.  
-- Swap the inventory source (e.g., generate JSON from `requirements.txt`).  
-- Extend the CI matrix or add OS runners if required.
+- Required checks: **Analyze**, **python (3.11)**, **python (3.12)**.
+- Linear history, no force‑push, conversations resolved, admins enforced.
+- Squash‑merge only; auto‑merge allowed once checks pass.
 
 ---
 
-## 🛡 Security
+## Contributing
 
-- Private disclosures via GitHub Security Advisories.  
-- **CodeQL** enabled; OSV runs on every PR and `main`.  
-- Secret scanning is enabled; never commit secrets.
-
----
-
-## 🙌 Contributing
-
-- **Small, atomic PRs** using Conventional Commits.  
-- Keep **local gates** green before pushing.  
-- Enable **auto-merge** once checks pass.
+- Use **small, atomic PRs** and **Conventional Commits** (e.g., `feat: ...`, `fix: ...`, `docs: ...`).
+- Keep local gates green before pushing.
+- Enable **auto‑merge** when checks pass.
 
 ---
 
-## 📈 SEO Keywords
+## Security Policy
 
-osv scanner python cli, osv.dev vulnerability audit, poetry lock deps to osv,  
-always green ci python, ruff black pytest mypy, github actions matrix, codeql analysis,  
-branch protection required checks, squash merge linear history, dependency security gating
+Please report vulnerabilities via **GitHub Security Advisories** (private) or open a minimal reproducible issue if appropriate. CodeQL and OSV scans run automatically on PRs and `main`.
 
 ---
 
-## 👤 Author
+## Sponsorship
 
-**CoderDeltaLAN (Yosvel)**  
-Email: `coderdeltalan.cargo784@8alias.com`  
-GitHub: https://github.com/CoderDeltaLAN
-
----
-
-## 💚 Donations & Sponsorship
-
-If this project saves you time, consider supporting ongoing maintenance. Thank you!
-[![Donate](https://img.shields.io/badge/Donate-PayPal-0070ba?logo=paypal&logoColor=white)](https://www.paypal.com/donate/?hosted_button_id=YVENCBNCZWVPW)
+If this project is useful, consider supporting continued maintenance and polish. Thank you!  
+[**PayPal Donate**](https://www.paypal.com/donate/?hosted_button_id=YVENCBNCZWVPW)
 
 ---
 
-## 📄 License
+## License
 
-Released under the **MIT License**. See [LICENSE](LICENSE).
+Distributed under the **MIT License**. See [LICENSE](LICENSE).
+
