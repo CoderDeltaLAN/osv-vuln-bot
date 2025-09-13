@@ -28,3 +28,6 @@ jobs:
           requireScope: false
           subjectPattern: ^.+$
           wip: true
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
